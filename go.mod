@@ -1,3 +1,3 @@
-module github.com/Louisdlr/Groupie-Tracker
+module Groupie-Tracker
 
 go 1.23.0
