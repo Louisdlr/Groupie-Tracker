@@ -6,16 +6,20 @@ import (
 	"net/http"
 )
 
-// Structures pour stocker les données de l'API
+// Structure pour stocker les informations d'un artiste
 type Artist struct {
-	Name       string   `json:"name"`
-	Image      string   `json:"image"`
-	Started    int      `json:"start_year"`
-	FirstAlbum string   `json:"first_album_date"`
-	Members    []string `json:"members"`
+	ID           int      `json:"id"`
+	Image        string   `json:"image"`
+	Name         string   `json:"name"`
+	Members      []string `json:"members"`
+	CreationDate int      `json:"creationDate"`
+	FirstAlbum   string   `json:"firstAlbum"`
+	Locations    string   `json:"locations"`
+	ConcertDates string   `json:"concertDates"`
+	Relations    string   `json:"relations"`
 }
 
-// Récupérer les artistes
+// Récupérer les artistes depuis l'API
 func GetArtists() ([]Artist, error) {
 	url := "https://groupietrackers.herokuapp.com/api/artists"
 	resp, err := http.Get(url)

@@ -1,18 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Groupie Tracker</title>
+    <title>Groupie Tracker - Artistes</title>
 </head>
 <body>
-    <h1>Groupie Tracker</h1>
+    <h1>Liste des Artistes</h1>
+    {{range .Artists}}
+        <div class="artist">
+            <h2>{{.Name}}</h2>
+            <img src="{{.Image}}" alt="Image de l'artiste" />
+            <p><strong>Date de création : </strong>{{.CreationDate}}</p>
+            <p><strong>Premier album : </strong>{{.FirstAlbum}}</p>
+            
+            <h3>Membres :</h3>
+            <ul>
+                {{range .Members}}
+                    <li>{{.}}</li>
+                {{end}}
+            </ul>
 
-    <h2>Artistes</h2>
-    <ul>
-        {{range .Artists}}
-            <li>{{.Name}} ({{.Started}}) - {{.FirstAlbum}}</li>
-        {{end}}
-    </ul>
+            <div class="links">
+                <p><strong>Voir les lieux :</strong> <a href="{{.Locations}}" target="_blank">Lieux des concerts</a></p>
+                <p><strong>Voir les dates :</strong> <a href="{{.ConcertDates}}" target="_blank">Dates des concerts</a></p>
+                <p><strong>Voir les relations :</strong> <a href="{{.Relations}}" target="_blank">Relations</a></p>
+            </div>
+        </div>
+    {{end}}
 </body>
 </html>
