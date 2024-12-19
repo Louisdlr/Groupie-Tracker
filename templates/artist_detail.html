@@ -31,24 +31,25 @@
         <div class="youcouleleleft">
             <img src="static/img/youcoulele.png" alt="youcoulele" class="giggle-image-left">
         </div>
-    
+
+        <!-- Contenu principal -->
         <div class="container">
             <div class="haut-page">
                 <h1 class="titre">Groupie - Tracker</h1>
-                <h3 class="sous-titre">Artistes</h3>
+                <h3 class="sous-titre">Détails sur l'Artiste</h3>
             </div>
-            <div class="buttons">
-                <div class="button-container">
-                    <button class="button-decouvrir" onclick="redirectToPage()">Découvrir</button>
-                    <p class="text">Découvrez les artistes</p>
-                </div>
-            </div>
-        </div>
 
-    <script>
-        function redirectToPage() {
-            window.location.href = "cards.html";
-        }
-    </script>
+            <div class="artist-details">
+                <img src="{{.Artist.Image}}" alt="Image de l'artiste"> <!-- Affiche l'image de l'artiste -->
+                <h2>{{.Artist.Name}}</h2> <!-- Affiche le nom de l'artiste -->
+                <p><strong>Date de création :</strong> {{.Artist.CreationDate}}</p> <!-- Affiche la date de création -->
+                <p><strong>Premier album :</strong> {{.Artist.FirstAlbum}}</p> <!-- Affiche le premier album -->
+                <p><strong>Membres :</strong>{{range .Artist.Members}}{{.}}, {{end}}</p>
+                <p><strong>Concerts :</strong>{{range .ConcertDates}}{{.ConcertDates}}, {{end}}</p>
+                <p><strong>Relations :</strong>{{range .Relations}}{{.Relations}}, {{end}}</p>
+                <p><strong>Emplacements :</strong>{{range .Locations}}{{.Locations}}, {{end}}</p>                
+            </div>
+            
+        </div>
 </body>
 </html>

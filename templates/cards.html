@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mynerve&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teachers&display=swap" rel="stylesheet">
+    <title>Groupie - Tracker</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+        <!-- forme bizzard du haut -->
+        <div class="svg-container"> 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 404" class="responsive-svg">
+                <path d="M303.067 241.331C285.82 266.215 -40.5043 385.109 -40.5043 385.109C-66.2607 402.159 -112.254 423.127 -90.1772 370.593C-62.5811 304.925 156.118 186.723 13.998 219.211C-128.122 251.699 -115.014 210.225 -21.187 86.4933C72.6397 -37.2385 148.529 -13.0451 82.9882 64.3736C17.4475 141.792 160.257 96.8619 354.12 40.8715C547.982 -15.1189 588.687 31.1942 519.696 96.8619C450.706 162.53 194.753 177.046 191.303 210.225C187.853 243.405 320.314 216.446 303.067 241.331Z" fill="#EDE2A4"/>
+            </svg>
+        </div>
+    
+        <!-- youcoulele du haut -->
+        <div class="youcouleletop">
+            <img src="static/img/youcoulele.png" alt="youcoulele" class="giggle-image">
+        </div>
+    
+        <!-- youcoulele du milieu -->
+        <div class="youcoulelemid">
+            <img src="static/img/youcoulele.png" alt="youcoulele" class="giggle-image-mid">
+        </div>
+    
+        <!-- youcoulele de gauche -->
+        <div class="youcouleleleft">
+            <img src="static/img/youcoulele.png" alt="youcoulele" class="giggle-image-left">
+        </div>
+    
+        <!-- Contenu principal -->
+        <div class="container">
+            <div class="haut-page">
+                <h1 class="titre">Groupie - Tracker</h1>
+                <h3 class="sous-titre">Artistes</h3>
+            </div>
+
+            <!-- Carte de l'artiste -->
+            <div id="artist-cards">
+                {{range .Artists}}
+                <div class="card" style="display: none;">
+                    <img class="artist-image" src="{{.Image}}" alt="Image de {{.Name}}">
+                    <h2 class="artist-name">{{.Name}}</h2>
+                    <div class="buttons">
+                        <button class="circle-button" onclick="nextCard()"><img src="static/img/non.png" alt=""></button>
+                        <button class="circle-button2" onclick="window.location.href='index.html'"><img src="static/img/home.png" alt=""></button>
+                        <button class="circle-button" onclick="window.location.href='/artist_detail.html?id={{.ID}}'"><img src="static/img/oui.png" alt=""></button>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <script>
+            // Récupérer la liste des artistes envoyée par le serveur
+            var artists = JSON.parse('{{.ArtistsJSON}}');
+            var currentArtistIndex = 0;
+        
+            // Fonction pour afficher l'artiste suivant
+            function nextCard() {
+                // Masquer la carte actuelle
+                var currentCard = document.querySelectorAll('.card')[currentArtistIndex];
+                currentCard.style.display = 'none';
+        
+                // Passer à l'artiste suivant
+                currentArtistIndex++;
+                if (currentArtistIndex >= artists.length) {
+                    currentArtistIndex = 0; // Revenir au début
+                }
+        
+                // Afficher la nouvelle carte
+                var nextCard = document.querySelectorAll('.card')[currentArtistIndex];
+                nextCard.style.display = 'block';
+            }
+        
+            // Afficher la première carte dès le départ
+            document.addEventListener('DOMContentLoaded', function() {
+                var firstCard = document.querySelectorAll('.card')[0];
+                firstCard.style.display = 'block'; // Afficher la première carte
+            });
+        </script>        
+</body>
+</html>

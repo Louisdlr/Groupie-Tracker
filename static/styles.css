@@ -1,0 +1,233 @@
+body{
+    background: #F2EBC4;
+    margin:0
+}
+
+/* forme du haut */
+.svg-container {
+    position: fixed; /* Important pour contrôler la position */
+    width: 100%; /* Adapte le conteneur à la largeur de l'écran */
+    display: flex; /* Optionnel, pour centrer le contenu */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Cache les débordements */
+    z-index: -1; /* Place le conteneur en arrière-plan */
+}
+  
+  /* SVG responsive */
+.responsive-svg {
+    width: 100%; /* Adapte la largeur au conteneur */
+    height: auto; /* Maintient les proportions */
+}
+
+
+/* citron haut */
+.youcouleletop{
+    position: fixed;
+    top: -45%;
+    right: -15%;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    filter: blur(2px);
+    z-index: -1;
+    transform: rotate(-80deg);
+}
+
+/* citron milieu */
+.youcoulelemid {
+    position: fixed;
+    top: 55%; /* Monte le citron de 20% par rapport au haut de l'écran */
+    right: 70%; /* Le rapproche de 23% du bord droit */
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    z-index: 10;
+    transform: rotate(190deg);
+}
+
+/* citron gauche */
+.youcouleleleft {
+    position: fixed;
+    top: -20%;
+    right: 70%;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    filter: blur(1px);
+    z-index: -1;
+    transform: rotate(100deg); /* Rotation de 45 degrés */
+}
+
+
+/* Animation de gigotement youcoulele */
+.giggle-image {
+    width: 800px; /* Taille de l'image (modifiable selon besoin) */
+    animation: giggle 0.2s infinite; /* Applique l'animation */
+  }
+
+.giggle-image-mid {
+    width: 1000px; /* Taille de l'image (modifiable selon besoin) */
+    animation: giggle 0.2s infinite; /* Applique l'animation */
+}
+
+.giggle-image-left {
+    width: 400px; /* Taille de l'image (modifiable selon besoin) */
+    animation: giggle 0.2s infinite; /* Applique l'animation */
+}
+
+  
+  /* Définition de l'animation */
+@keyframes giggle {
+    0%, 100% {
+      transform: rotate(0deg); /* Position initiale */
+    }
+    25% {
+      transform: rotate(0deg); /* Rotation vers la gauche */
+    }
+    75% {
+      transform: rotate(0.5deg); /* Rotation vers la droite */
+    }
+}
+
+/* Conteneur principal */
+.container {
+    width: 100%;
+    text-align: center;
+}
+
+/* Partie haute : titre et sous-titre */
+.haut-page {
+    margin-top: 5vh;
+    margin-bottom: 10vh;
+}
+
+.titre {
+    position: relative;
+    font-family: 'Luckiest Guy';
+    font-size: 70px; /* Taille du texte dynamique selon la taille de l'écran */
+    background: linear-gradient(90deg, #ab7500 0%, #F1D814 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Style pour le sous-titre h3 */
+.sous-titre {
+    color: #ab7500;
+    font-family: 'Mynerve';
+    font-size: 25px;
+    font-weight: 400;
+    margin-top: -4%;
+}
+
+/* Style des boutons */
+.button-container button {
+    border: none;
+    color: #FFF;
+    font-family: 'Mynerve';
+    font-size: 25px;
+    cursor: pointer;
+    width: 280px;
+    height: 48px;
+    border-radius: 20px;
+    background: #ab7500;
+}
+
+/* Autres styles pour les textes, etc. */
+.text {
+    color: #ab7500;
+    font-family: 'Teachers';
+    font-size: 15px;
+}
+
+
+
+
+/* -----------PAGE CARDS.HTML-------------- */
+/* Style pour la carte de l'artiste */
+.card {
+    display: block;           /* Affiche la carte */
+    margin: 20px auto;        /* Centrer la carte et ajouter un espace autour */
+    width: 300px;             /* Largeur de la carte */
+    background-color: rgba(138, 138, 138, 0.142);
+    border-radius: 28px;
+    background-blend-mode: hard-light;
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    box-shadow: #3c3c3c36 0px 10px 10px;   
+}
+
+.artist-image {
+    width: 100%;
+    height: auto;
+    border-radius: 28px;
+}
+
+.artist-name {
+    font-size: 1.5rem;
+    font-family: 'Teachers';
+    margin-top: 10px;
+}
+
+.buttons {
+    margin-top: 20px;
+    display: flex; /* Utilise flexbox pour aligner les boutons côte à côte */
+    justify-content: center; /* Centre les boutons horizontalement */
+    gap: 20px; /* Espace entre les boutons */
+}
+
+.circle-button {
+    width: 68px; /* Taille du cercle */
+    height: 68px; /* Taille du cercle */
+    border-radius: 50%; /* Rend le conteneur circulaire */
+    display: flex; /* Centre le contenu */
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    background: #CEC48C;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour effet 3D */
+    cursor: pointer; /* Change le curseur en "main" */
+    transition: transform 0.2s ease; /* Animation au clic ou survol */
+    border: none; /* Enlève les bordures */
+}
+
+/* Animation de zoom au survol */
+.circle-button:hover {
+    transform: scale(1.1); /* Agrandit légèrement le bouton */
+}
+
+.circle-button img {
+    width: 35px;  /* Ajuste la taille selon tes besoins */
+    height: 35px; /* Ajuste la taille selon tes besoins */
+    object-fit: contain; /* Cela garantit que l'image conserve ses proportions sans être déformée */
+}
+
+.circle-button2 {
+    width: 58px; /* Taille du cercle */
+    height: 58px; /* Taille du cercle */
+    border-radius: 50%; /* Rend le conteneur circulaire */
+    display: flex; /* Centre le contenu */
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    background: #CEC48C;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour effet 3D */
+    cursor: pointer; /* Change le curseur en "main" */
+    transition: transform 0.2s ease; /* Animation au clic ou survol */
+    border: none; /* Enlève les bordures */
+}
+
+/* Style pour rendre le bouton home plus petit */
+.circle-button2 img{
+    width: 25px;
+    height: 25px;
+    object-fit: contain; /* Cela garantit que l'image conserve ses proportions sans être déformée */
+}
+
+/* Animation de zoom au survol */
+.circle-button2:hover {
+    transform: scale(1.1); /* Agrandit légèrement le bouton */
+}
+
+
