@@ -3,120 +3,113 @@ package Api
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
-// Structure pour stocker les informations d'un artiste
+// Structures des données
+
 type Artist struct {
-	ID           int      `json:"id"`
-	Image        string   `json:"image"`
-	Name         string   `json:"name"`
-	Members      []string `json:"members"`
-	CreationDate int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
+	ID              int      `json:"id"`
+	Image           string   `json:"image"`
+	Name            string   `json:"name"`
+	Members         []string `json:"members"`
+	CreationDate    int      `json:"creationDate"`
+	FirstAlbum      string   `json:"firstAlbum"`
+	LocationsURL    string   `json:"locations"`
+	ConcertDatesURL string   `json:"concertDates"`
+	RelationsURL    string   `json:"relations"`
 }
 
-// Structure pour les localisations retournées par l'API
-type LocationsResponse struct {
-	Locations []Location `json:"locations"`
-}
-
-// Structure pour une localisation
 type Location struct {
-	ID       int    `json:"id"`
-	Location string `json:"location"`
+	Locations []string `json:"locations"`
 }
 
-// Structure pour les dates de concerts retournées par l'API
-type ConcertDatesResponse struct {
-	ConcertDates []ConcertDate `json:"concertDates"`
-}
-
-// Structure pour une date de concert
 type ConcertDate struct {
-	ID       int    `json:"id"`
-	Date     string `json:"date"`
-	Location string `json:"location"`
+	Dates []string `json:"dates"`
 }
 
-// Structure pour les relations retournées par l'API
-type RelationsResponse struct {
-	Relations []Relation `json:"relations"`
-}
-
-// Structure pour une relation
 type Relation struct {
-	ID       int    `json:"id"`
-	Relation string `json:"relation"`
+	DatesLocations map[string][]string `json:"datesLocations"`
 }
 
-// Fonction pour récupérer les artistes depuis l'API
+// Fonctions pour récupérer les données des APIs
+
+// Récupère les artistes
 func GetArtists() ([]Artist, error) {
 	url := "https://groupietrackers.herokuapp.com/api/artists"
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("Erreur lors de la récupération des artistes: %v", err)
-	}
-	defer resp.Body.Close()
-
-	var artists []Artist
-	if err := json.NewDecoder(resp.Body).Decode(&artists); err != nil {
-		return nil, fmt.Errorf("Erreur de décodage JSON des artistes: %v", err)
-	}
-
-	return artists, nil
+	return fetchData[[]Artist](url)
 }
 
-// Fonction pour récupérer les localisations depuis l'API
-func GetLocations() ([]Location, error) {
-	url := "https://groupietrackers.herokuapp.com/api/locations"
-	resp, err := http.Get(url)
+// Récupère les localisations
+func GetLocations(url string) ([]string, error) {
+	var locData Location
+	err := fetchDataFromURL(url, &locData)
 	if err != nil {
-		return nil, fmt.Errorf("Erreur lors de la récupération des localisations: %v", err)
+		return nil, err
 	}
-	defer resp.Body.Close()
-
-	var locationsResponse LocationsResponse
-	if err := json.NewDecoder(resp.Body).Decode(&locationsResponse); err != nil {
-		return nil, fmt.Errorf("Erreur de décodage JSON des localisations: %v", err)
-	}
-
-	return locationsResponse.Locations, nil
+	return locData.Locations, nil
 }
 
-// Fonction pour récupérer les dates de concerts depuis l'API
-func GetConcertDates() ([]ConcertDate, error) {
-	url := "https://groupietrackers.herokuapp.com/api/dates"
-	resp, err := http.Get(url)
+// Récupère les dates de concert
+func GetConcertDates(url string) ([]string, error) {
+	var dateData ConcertDate
+	err := fetchDataFromURL(url, &dateData)
 	if err != nil {
-		return nil, fmt.Errorf("Erreur lors de la récupération des dates de concerts: %v", err)
+		return nil, err
 	}
-	defer resp.Body.Close()
-
-	var concertDatesResponse ConcertDatesResponse
-	if err := json.NewDecoder(resp.Body).Decode(&concertDatesResponse); err != nil {
-		return nil, fmt.Errorf("Erreur de décodage JSON des dates de concerts: %v", err)
-	}
-
-	return concertDatesResponse.ConcertDates, nil
+	return dateData.Dates, nil
 }
 
-// Fonction pour récupérer les relations depuis l'API
-func GetRelations() ([]Relation, error) {
-	url := "https://groupietrackers.herokuapp.com/api/relation"
+// Récupère les relations
+func GetRelations(url string) (map[string][]string, error) {
+	var relData Relation
+	err := fetchDataFromURL(url, &relData)
+	if err != nil {
+		return nil, err
+	}
+	return relData.DatesLocations, nil
+}
+
+// Fonction générique pour récupérer des données JSON
+func fetchData[T any](url string) (T, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("Erreur lors de la récupération des relations: %v", err)
+		return *new(T), fmt.Errorf("erreur lors de la requête : %w", err)
 	}
 	defer resp.Body.Close()
 
-	var relationsResponse RelationsResponse
-	if err := json.NewDecoder(resp.Body).Decode(&relationsResponse); err != nil {
-		return nil, fmt.Errorf("Erreur de décodage JSON des relations: %v", err)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return *new(T), fmt.Errorf("erreur lors de la lecture de la réponse : %w", err)
 	}
 
-	return relationsResponse.Relations, nil
+	var data T
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return *new(T), fmt.Errorf("erreur lors du décodage JSON : %w", err)
+	}
+
+	return data, nil
+}
+
+// Fonction pour récupérer et décoder des données à partir d'un URL spécifique
+func fetchDataFromURL(url string, target any) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("erreur lors de la requête : %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("erreur lors de la lecture de la réponse : %w", err)
+	}
+
+	err = json.Unmarshal(body, target)
+	if err != nil {
+		return fmt.Errorf("erreur lors du décodage JSON : %w", err)
+	}
+
+	return nil
 }

@@ -13,91 +13,88 @@ import (
 type PageData struct {
 	Artists      []Api.Artist
 	Artist       Api.Artist
-	ConcertDates []Api.ConcertDate // Ajouter les dates de concerts
-	Locations    []Api.Location    // Ajouter les localisations
-	Relations    []Api.Relation    // Ajouter les relations
-	ArtistsJSON  string            // Pour passer les artistes en JSON pour le JavaScript
+	Locations    []string
+	ConcertDates []string
+	Relations    map[string][]string
+	ArtistsJSON  string
 }
 
 func main() {
-
-	// Gérer les fichiers statiques (CSS, JS, images)
+	// Serveur pour les fichiers statiques
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	// Serve la page d'accueil (index.html)
+	// Route : page d'accueil (index.html)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		artists, err := Api.GetArtists()
 		if err != nil {
-			log.Printf("Erreur lors de la récupération des artistes: %v", err)
+			log.Printf("Erreur lors de la récupération des artistes : %v", err)
 			http.Error(w, "Erreur de récupération des artistes", http.StatusInternalServerError)
 			return
 		}
 
-		// Convertir les artistes en JSON
 		artistsJSON, err := json.Marshal(artists)
 		if err != nil {
-			log.Printf("Erreur lors de la conversion des artistes en JSON: %v", err)
+			log.Printf("Erreur lors de la conversion JSON des artistes : %v", err)
 			http.Error(w, "Erreur de conversion des artistes", http.StatusInternalServerError)
 			return
 		}
 
 		pageData := PageData{
 			Artists:     artists,
-			ArtistsJSON: string(artistsJSON), // Passer les artistes JSON à la page
+			ArtistsJSON: string(artistsJSON),
 		}
 
 		tmpl, err := template.ParseFiles("templates/index.html")
 		if err != nil {
-			log.Printf("Erreur lors du chargement du template: %v", err)
+			log.Printf("Erreur lors du chargement du template : %v", err)
 			http.Error(w, "Erreur lors du chargement du template", http.StatusInternalServerError)
 			return
 		}
 
 		err = tmpl.Execute(w, pageData)
 		if err != nil {
-			log.Printf("Erreur lors de l'exécution du template: %v", err)
+			log.Printf("Erreur lors de l'exécution du template : %v", err)
 			http.Error(w, "Erreur lors de l'affichage de la page", http.StatusInternalServerError)
 		}
 	})
 
-	// Serve la page des cartes d'artistes (cards.html)
+	// Route : cartes des artistes (cards.html)
 	http.HandleFunc("/cards.html", func(w http.ResponseWriter, r *http.Request) {
 		artists, err := Api.GetArtists()
 		if err != nil {
-			log.Printf("Erreur lors de la récupération des artistes: %v", err)
+			log.Printf("Erreur lors de la récupération des artistes : %v", err)
 			http.Error(w, "Erreur de récupération des artistes", http.StatusInternalServerError)
 			return
 		}
 
-		// Convertir les artistes en JSON
 		artistsJSON, err := json.Marshal(artists)
 		if err != nil {
-			log.Printf("Erreur lors de la conversion des artistes en JSON: %v", err)
+			log.Printf("Erreur lors de la conversion JSON des artistes : %v", err)
 			http.Error(w, "Erreur de conversion des artistes", http.StatusInternalServerError)
 			return
 		}
 
 		pageData := PageData{
 			Artists:     artists,
-			ArtistsJSON: string(artistsJSON), // Passer les artistes JSON à la page
+			ArtistsJSON: string(artistsJSON),
 		}
 
 		tmpl, err := template.ParseFiles("templates/cards.html")
 		if err != nil {
-			log.Printf("Erreur lors du chargement du template: %v", err)
+			log.Printf("Erreur lors du chargement du template : %v", err)
 			http.Error(w, "Erreur lors du chargement du template", http.StatusInternalServerError)
 			return
 		}
 
 		err = tmpl.Execute(w, pageData)
 		if err != nil {
-			log.Printf("Erreur lors de l'exécution du template: %v", err)
+			log.Printf("Erreur lors de l'exécution du template : %v", err)
 			http.Error(w, "Erreur lors de l'affichage de la page", http.StatusInternalServerError)
 		}
 	})
 
+	// Route : détail d'un artiste (artist_detail.html)
 	http.HandleFunc("/artist_detail.html", func(w http.ResponseWriter, r *http.Request) {
-		// Récupère l'ID de l'artiste passé dans l'URL (par exemple, /artist_detail.html?id=3)
 		idStr := r.URL.Query().Get("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil || id <= 0 {
@@ -105,15 +102,13 @@ func main() {
 			return
 		}
 
-		// Récupère les artistes depuis l'API
 		artists, err := Api.GetArtists()
 		if err != nil {
-			log.Printf("Erreur lors de la récupération des artistes: %v", err)
+			log.Printf("Erreur lors de la récupération des artistes : %v", err)
 			http.Error(w, "Erreur de récupération des artistes", http.StatusInternalServerError)
 			return
 		}
 
-		// Cherche l'artiste correspondant à l'ID
 		var artist Api.Artist
 		for _, a := range artists {
 			if a.ID == id {
@@ -127,52 +122,49 @@ func main() {
 			return
 		}
 
-		// Récupérer les autres données (dates de concert, localisations, relations)
-		concertDates, err := Api.GetConcertDates()
+		locations, err := Api.GetLocations(artist.LocationsURL)
 		if err != nil {
-			log.Printf("Erreur lors de la récupération des dates de concerts: %v", err)
-			http.Error(w, "Erreur de récupération des dates de concerts", http.StatusInternalServerError)
-			return
-		}
-
-		locations, err := Api.GetLocations()
-		if err != nil {
-			log.Printf("Erreur lors de la récupération des localisations: %v", err)
+			log.Printf("Erreur lors de la récupération des localisations : %v", err)
 			http.Error(w, "Erreur de récupération des localisations", http.StatusInternalServerError)
 			return
 		}
 
-		relations, err := Api.GetRelations()
+		concertDates, err := Api.GetConcertDates(artist.ConcertDatesURL)
 		if err != nil {
-			log.Printf("Erreur lors de la récupération des relations: %v", err)
+			log.Printf("Erreur lors de la récupération des dates de concert : %v", err)
+			http.Error(w, "Erreur de récupération des dates de concert", http.StatusInternalServerError)
+			return
+		}
+
+		relations, err := Api.GetRelations(artist.RelationsURL)
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des relations : %v", err)
 			http.Error(w, "Erreur de récupération des relations", http.StatusInternalServerError)
 			return
 		}
 
-		// Préparer les données pour le template
 		pageData := PageData{
 			Artist:       artist,
-			ConcertDates: concertDates,
 			Locations:    locations,
+			ConcertDates: concertDates,
 			Relations:    relations,
 		}
 
-		// Charger et exécuter le template
 		tmpl, err := template.ParseFiles("templates/artist_detail.html")
 		if err != nil {
-			log.Printf("Erreur lors du chargement du template: %v", err)
+			log.Printf("Erreur lors du chargement du template : %v", err)
 			http.Error(w, "Erreur lors du chargement du template", http.StatusInternalServerError)
 			return
 		}
 
 		err = tmpl.Execute(w, pageData)
 		if err != nil {
-			log.Printf("Erreur lors de l'exécution du template: %v", err)
+			log.Printf("Erreur lors de l'exécution du template : %v", err)
 			http.Error(w, "Erreur lors de l'affichage de la page", http.StatusInternalServerError)
 		}
 	})
 
-	// Démarrer le serveur sur le port 8080
+	// Démarrer le serveur
 	fmt.Println("Serveur démarré sur http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

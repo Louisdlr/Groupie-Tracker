@@ -39,16 +39,21 @@
                 <h3 class="sous-titre">Détails sur l'Artiste</h3>
             </div>
 
-            <div class="artist-details">
-                <img src="{{.Artist.Image}}" alt="Image de l'artiste"> <!-- Affiche l'image de l'artiste -->
-                <h2>{{.Artist.Name}}</h2> <!-- Affiche le nom de l'artiste -->
-                <p><strong>Date de création :</strong> {{.Artist.CreationDate}}</p> <!-- Affiche la date de création -->
-                <p><strong>Premier album :</strong> {{.Artist.FirstAlbum}}</p> <!-- Affiche le premier album -->
-                <p><strong>Membres :</strong>{{range .Artist.Members}}{{.}}, {{end}}</p>
-                <p><strong>Concerts :</strong>{{range .ConcertDates}}{{.ConcertDates}}, {{end}}</p>
-                <p><strong>Relations :</strong>{{range .Relations}}{{.Relations}}, {{end}}</p>
-                <p><strong>Emplacements :</strong>{{range .Locations}}{{.Locations}}, {{end}}</p>                
-            </div>
+            <div id="artist-cards">
+                <div class="card">
+                    <img class="artist-image" src="{{.Artist.Image}}" alt="Image de l'artiste">
+                    <h2 class="artist-name">{{.Artist.Name}}</h2>
+                    <p><strong>Date de création :</strong> {{.Artist.CreationDate}}</p>
+                    <p><strong>Premier album :</strong> {{.Artist.FirstAlbum}}</p>
+                    <p><strong>Membres :</strong> {{range .Artist.Members}}{{.}}, {{end}}</p>
+                    <p><strong>Concerts :</strong> {{range .ConcertDates}}{{.}}, {{end}}</p>
+                    <p><strong>Relations :</strong> {{range .Relations}}{{.}}, {{end}}</p>
+                    <p><strong>Emplacements :</strong> {{range .Locations}}{{.}}, {{end}}</p>
+                    <div class="buttons">
+                        <button class="circle-button2" onclick="window.location.href='cards.html'"><img src="static/img/revenir.png" alt=""></button>
+                    </div>
+                </div>
+            </div>            
             
         </div>
 </body>
