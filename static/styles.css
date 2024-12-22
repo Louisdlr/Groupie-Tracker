@@ -259,3 +259,31 @@ body{
     min-height: 100vh;
     padding: 20px;
 }
+
+/* Conteneur pour les contrôles de la page */
+.catalog-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* Espacement entre le bouton et la barre de recherche */
+    margin: 20px 0; /* Espacement avec la grille */
+}   
+
+/* Barre de recherche */
+#search-bar {
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 15px;
+    width: 250px; /* Largeur de la barre */
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #CEC48C;
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    border: none;
+    width: 250px; /* Largeur de la barre */
+    max-width: 100%;
+}
