@@ -164,6 +164,41 @@ func main() {
 		}
 	})
 
+	// Route : catalogue des artistes (catalog.html)
+	http.HandleFunc("/catalogue.html", func(w http.ResponseWriter, r *http.Request) {
+		artists, err := Api.GetArtists()
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des artistes : %v", err)
+			http.Error(w, "Erreur de récupération des artistes", http.StatusInternalServerError)
+			return
+		}
+
+		artistsJSON, err := json.Marshal(artists)
+		if err != nil {
+			log.Printf("Erreur lors de la conversion JSON des artistes : %v", err)
+			http.Error(w, "Erreur de conversion des artistes", http.StatusInternalServerError)
+			return
+		}
+
+		pageData := PageData{
+			Artists:     artists,
+			ArtistsJSON: string(artistsJSON),
+		}
+
+		tmpl, err := template.ParseFiles("templates/catalogue.html")
+		if err != nil {
+			log.Printf("Erreur lors du chargement du template : %v", err)
+			http.Error(w, "Erreur lors du chargement du template", http.StatusInternalServerError)
+			return
+		}
+
+		err = tmpl.Execute(w, pageData)
+		if err != nil {
+			log.Printf("Erreur lors de l'exécution du template : %v", err)
+			http.Error(w, "Erreur lors de l'affichage de la page", http.StatusInternalServerError)
+		}
+	})
+
 	// Démarrer le serveur
 	fmt.Println("Serveur démarré sur http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

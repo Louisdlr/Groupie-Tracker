@@ -42,7 +42,7 @@ body{
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    z-index: 10;
+    z-index: -1;
     transform: rotate(190deg);
 }
 
@@ -132,6 +132,7 @@ body{
     height: 48px;
     border-radius: 20px;
     background: linear-gradient(90deg, #ab7500 70%, #F1D814 100%);
+    margin-top: 55px;
 }
 
 /* Autres styles pour les textes, etc. */
@@ -244,3 +245,17 @@ body{
 }
 
 
+
+
+
+/* -------------catalogue-------------- */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 0.25fr); /* 3 colonnes */
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 20px;
+}
