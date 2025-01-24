@@ -269,21 +269,81 @@ body{
     margin: 20px 0; /* Espacement avec la grille */
 }   
 
+/* Conteneur de la barre de recherche */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Barre de recherche */
 #search-bar {
     font-size: 1rem;
-    padding: 10px;
-    border-radius: 15px;
+    padding: 10px 40px 10px 15px; /* Ajuste le padding pour laisser de la place à l'icône */
+    border-radius: 25px; /* Bords arrondis */
     width: 250px; /* Largeur de la barre */
     max-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: #CEC48C;
     backdrop-filter: blur(2px);
+    border: none;  /* Pas de bordure solide */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* Ombre subtile */
+    transition: width 0.3s ease-in-out, box-shadow 0.2s ease; /* Transition de la largeur et de l'ombre */
+    cursor: text; /* Change le curseur pour signaler la zone de texte */
+}
+
+/* Changer le style au focus */
+#search-bar:focus {
+    width: 350px;  /* Étendre la barre de recherche lors du focus */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Ombre plus marquée au focus */
+}
+
+/* Icône loupe */
+.search-icon {
+    position: absolute;
+    right: 10px; /* Position de l'icône à droite */
+    width: 20px; /* Largeur de l'image */
+    height: 20px; /* Hauteur de l'image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-icon img {
+    width: 100%; /* Ajuste l'image à la taille du conteneur */
+    height: 100%;
+    object-fit: cover; /* S'assure que l'image reste proportionnée */
+    pointer-events: none; /* Empêche les clics sur l'icône */
+}
+
+/* Suggestions */
+.suggestions {
+    position: absolute;
+    font-family: 'Teachers';
+    top: 100%;  /* Positionne juste en dessous de la barre de recherche */
+    left: 0;
+    width: 100%;  /* Faire en sorte que les suggestions occupent toute la largeur de la barre */
+    background: #CEC48C;  /* Fond de la suggestion similaire à la barre de recherche */
+    border-radius: 25px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* Ombre portée subtile pour les suggestions */
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+}
+
+.suggestion-item {
+    padding: 10px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.2s ease;
-    border: none;
-    width: 250px; /* Largeur de la barre */
-    max-width: 100%;
+    border-bottom: 1px solid #b6b074;   
+}
+
+.suggestion-item:hover {
+    background-color: #b6b074; /* Changer la couleur au survol */
+}
+
+/* Cacher les suggestions si aucune entrée */
+.suggestions.hidden {
+    display: none;
 }
