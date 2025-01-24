@@ -199,6 +199,77 @@ func main() {
 		}
 	})
 
+	// Route : détail d'un artiste (artist_detail_catalogue.html)
+	http.HandleFunc("/artist_detail_catalogue.html", func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.URL.Query().Get("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil || id <= 0 {
+			http.Error(w, "ID invalide", http.StatusBadRequest)
+			return
+		}
+
+		artists, err := Api.GetArtists()
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des artistes : %v", err)
+			http.Error(w, "Erreur de récupération des artistes", http.StatusInternalServerError)
+			return
+		}
+
+		var artist Api.Artist
+		for _, a := range artists {
+			if a.ID == id {
+				artist = a
+				break
+			}
+		}
+
+		if artist.ID == 0 {
+			http.Error(w, "Artiste non trouvé", http.StatusNotFound)
+			return
+		}
+
+		locations, err := Api.GetLocations(artist.LocationsURL)
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des localisations : %v", err)
+			http.Error(w, "Erreur de récupération des localisations", http.StatusInternalServerError)
+			return
+		}
+
+		concertDates, err := Api.GetConcertDates(artist.ConcertDatesURL)
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des dates de concert : %v", err)
+			http.Error(w, "Erreur de récupération des dates de concert", http.StatusInternalServerError)
+			return
+		}
+
+		relations, err := Api.GetRelations(artist.RelationsURL)
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des relations : %v", err)
+			http.Error(w, "Erreur de récupération des relations", http.StatusInternalServerError)
+			return
+		}
+
+		pageData := PageData{
+			Artist:       artist,
+			Locations:    locations,
+			ConcertDates: concertDates,
+			Relations:    relations,
+		}
+
+		tmpl, err := template.ParseFiles("templates/artist_detail_catalogue.html")
+		if err != nil {
+			log.Printf("Erreur lors du chargement du template : %v", err)
+			http.Error(w, "Erreur lors du chargement du template", http.StatusInternalServerError)
+			return
+		}
+
+		err = tmpl.Execute(w, pageData)
+		if err != nil {
+			log.Printf("Erreur lors de l'exécution du template : %v", err)
+			http.Error(w, "Erreur lors de l'affichage de la page", http.StatusInternalServerError)
+		}
+	})
+
 	// Démarrer le serveur
 	fmt.Println("Serveur démarré sur http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
