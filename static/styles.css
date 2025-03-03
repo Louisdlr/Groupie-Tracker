@@ -169,6 +169,7 @@ body{
     font-family: 'Teachers';
     margin-top: 10px;
     font-size: 1.5rem;
+    text-align: left;
     
 }
 
@@ -346,4 +347,14 @@ body{
 /* Cacher les suggestions si aucune entrée */
 .suggestions.hidden {
     display: none;
+}
+
+.relation-list {
+    list-style-type: none; /* Enlever les points */
+    padding: 0; /* Enlever le padding par défaut */
+    text-align: left; /* Aligner le texte à gauche */
+}
+
+.relation-list li {
+    margin-bottom: 5px; /* Ajouter un peu d'espace entre les éléments de la liste */
 }

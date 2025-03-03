@@ -46,9 +46,18 @@
                     <p><strong>Date de création :</strong> {{.Artist.CreationDate}}</p>
                     <p><strong>Premier album :</strong> {{.Artist.FirstAlbum}}</p>
                     <p><strong>Membres :</strong> {{range .Artist.Members}}{{.}}, {{end}}</p>
-                    <p><strong>Concerts :</strong> {{range .ConcertDates}}{{.}}, {{end}}</p>
-                    <p><strong>Relations :</strong> {{range .Relations}}{{.}}, {{end}}</p>
-                    <p><strong>Emplacements :</strong> {{range .Locations}}{{.}}, {{end}}</p>
+                    <p><strong>Relations :</strong></p>
+                    <ul class="relation-list">
+                        {{range $location, $dates := .Artist.Relations}}
+                        <li>{{$location}}: 
+                            <ul>
+                                {{range $dates}}
+                                <li>{{.}}</li>
+                                {{end}}
+                            </ul>
+                        </li>
+                        {{end}}
+                    </ul>
                     <div class="buttons">
                         <button class="circle-button2" onclick="window.location.href='catalogue.html'"><img src="static/img/revenir.png" alt=""></button>
                     </div>

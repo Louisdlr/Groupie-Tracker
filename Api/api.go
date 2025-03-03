@@ -10,15 +10,18 @@ import (
 // Structures des données
 
 type Artist struct {
-	ID              int      `json:"id"`
-	Image           string   `json:"image"`
-	Name            string   `json:"name"`
-	Members         []string `json:"members"`
-	CreationDate    int      `json:"creationDate"`
-	FirstAlbum      string   `json:"firstAlbum"`
-	LocationsURL    string   `json:"locations"`
-	ConcertDatesURL string   `json:"concertDates"`
-	RelationsURL    string   `json:"relations"`
+	ID              int                 `json:"id"`
+	Image           string              `json:"image"`
+	Name            string              `json:"name"`
+	Members         []string            `json:"members"`
+	CreationDate    int                 `json:"creationDate"`
+	FirstAlbum      string              `json:"firstAlbum"`
+	LocationsURL    string              `json:"locations"`
+	ConcertDatesURL string              `json:"concertDates"`
+	RelationsURL    string              `json:"relations"`
+	Relations       map[string][]string `json:"-"`
+	Dates           []string            `json:"-"`
+	Locations       []string            `json:"-"`
 }
 
 type Location struct {
@@ -38,7 +41,30 @@ type Relation struct {
 // Récupère les artistes
 func GetArtists() ([]Artist, error) {
 	url := "https://groupietrackers.herokuapp.com/api/artists"
-	return fetchData[[]Artist](url)
+	artists, err := fetchData[[]Artist](url)
+	if err != nil {
+		return nil, err
+	}
+
+	for i, artist := range artists {
+		relations, err := GetRelations(artist.RelationsURL)
+		if err != nil {
+			return nil, err
+		}
+		artists[i].Relations = relations
+
+		// Extract dates and locations from relations
+		var dates []string
+		var locations []string
+		for location, dateList := range relations {
+			locations = append(locations, location)
+			dates = append(dates, dateList...)
+		}
+		artists[i].Dates = dates
+		artists[i].Locations = locations
+	}
+
+	return artists, nil
 }
 
 // Récupère les localisations
