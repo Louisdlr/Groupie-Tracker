@@ -270,6 +270,7 @@ body{
     margin: 20px 0; /* Espacement avec la grille */
 }   
 
+
 /* Conteneur de la barre de recherche */
 .search-container {
     position: relative;
@@ -315,6 +316,32 @@ body{
     height: 100%;
     object-fit: cover; /* S'assure que l'image reste proportionnée */
     pointer-events: none; /* Empêche les clics sur l'icône */
+}
+#button-filter {
+    width: 58px; /* Taille similaire à circle-button2 */
+    height: 58px; /* Taille similaire à circle-button2 */
+    border-radius: 50%; /* Pour avoir un bouton circulaire */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #CEC48C;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    border: none;
+}
+
+/* Effet de survol du bouton */
+#button-filter:hover {
+    transform: scale(1.1); /* Agrandit légèrement le bouton */
+}
+
+/* Style pour l'icône du bouton filter */
+#button-filter img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
 }
 
 /* Suggestions */

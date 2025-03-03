@@ -19,6 +19,17 @@ type PageData struct {
 	ArtistsJSON  string
 }
 
+func FilterArtistsByMembers(artists []Api.Artist, minMembers, maxMembers int) []Api.Artist {
+	var filtered []Api.Artist
+	for _, artist := range artists {
+		membersCount := len(artist.Members)
+		if membersCount >= minMembers && membersCount <= maxMembers {
+			filtered = append(filtered, artist)
+		}
+	}
+	return filtered
+}
+
 func main() {
 	// Serveur pour les fichiers statiques
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -32,16 +43,29 @@ func main() {
 			return
 		}
 
-		artistsJSON, err := json.Marshal(artists)
-		if err != nil {
-			log.Printf("Erreur lors de la conversion JSON des artistes : %v", err)
-			http.Error(w, "Erreur de conversion des artistes", http.StatusInternalServerError)
-			return
+		// Récupération des valeurs de filtrage à partir des paramètres de requête
+		minStr := r.URL.Query().Get("min")
+		maxStr := r.URL.Query().Get("max")
+
+		var minMembers, maxMembers int
+		if minStr != "" {
+			minMembers, err = strconv.Atoi(minStr)
+			if err != nil {
+				minMembers = 0 // Si l'entrée est invalide, prendre 0 comme valeur par défaut
+			}
+		}
+		if maxStr != "" {
+			maxMembers, err = strconv.Atoi(maxStr)
+			if err != nil {
+				maxMembers = 1000 // Valeur par défaut pour max
+			}
 		}
 
+		// Filtrage des artistes par nombre de membres
+		artists = FilterArtistsByMembers(artists, minMembers, maxMembers)
+
 		pageData := PageData{
-			Artists:     artists,
-			ArtistsJSON: string(artistsJSON),
+			Artists: artists,
 		}
 
 		tmpl, err := template.ParseFiles("templates/index.html")
@@ -58,6 +82,28 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/filtered_catalogue", func(w http.ResponseWriter, r *http.Request) {
+		artists, err := Api.GetArtists()
+		if err != nil {
+			log.Printf("Erreur lors de la récupération des artistes : %v", err)
+			http.Error(w, "Erreur de récupération des artistes", http.StatusInternalServerError)
+			return
+		}
+
+		// Récupération des valeurs depuis l'URL
+		minStr := r.URL.Query().Get("min")
+		maxStr := r.URL.Query().Get("max")
+
+		minMembers, errMin := strconv.Atoi(minStr)
+		maxMembers, errMax := strconv.Atoi(maxStr)
+
+		if errMin == nil && errMax == nil {
+			artists = FilterArtistsByMembers(artists, minMembers, maxMembers)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(artists)
+	})
+
 	// Route : cartes des artistes (cards.html)
 	http.HandleFunc("/cards.html", func(w http.ResponseWriter, r *http.Request) {
 		artists, err := Api.GetArtists()
@@ -67,16 +113,8 @@ func main() {
 			return
 		}
 
-		artistsJSON, err := json.Marshal(artists)
-		if err != nil {
-			log.Printf("Erreur lors de la conversion JSON des artistes : %v", err)
-			http.Error(w, "Erreur de conversion des artistes", http.StatusInternalServerError)
-			return
-		}
-
 		pageData := PageData{
-			Artists:     artists,
-			ArtistsJSON: string(artistsJSON),
+			Artists: artists,
 		}
 
 		tmpl, err := template.ParseFiles("templates/cards.html")
@@ -173,16 +211,8 @@ func main() {
 			return
 		}
 
-		artistsJSON, err := json.Marshal(artists)
-		if err != nil {
-			log.Printf("Erreur lors de la conversion JSON des artistes : %v", err)
-			http.Error(w, "Erreur de conversion des artistes", http.StatusInternalServerError)
-			return
-		}
-
 		pageData := PageData{
-			Artists:     artists,
-			ArtistsJSON: string(artistsJSON),
+			Artists: artists,
 		}
 
 		tmpl, err := template.ParseFiles("templates/catalogue.html")
