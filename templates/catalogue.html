@@ -8,6 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Teachers&display=swap" rel="stylesheet">
     <title>Groupie - Tracker</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .filter-container {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <!-- Forme bizarre du haut -->
@@ -37,7 +43,6 @@
             <h1 class="titre">Groupie - Tracker</h1>
             <h3 class="sous-titre">Catalogue</h3>
         </div>
-
         <div class="catalog-controls">
             <button class="circle-button2" onclick="window.location.href='index.html'">
                 <img src="static/img/home.png" alt="">
@@ -46,13 +51,29 @@
                 <input type="text" id="search-bar" placeholder="Rechercher un artiste..." oninput="showSuggestions()" onkeydown="handleKeyDown(event)">
                 <span class="search-icon"><img src="static/img/chercher.png" alt=""></span>
                 <div id="suggestions" class="suggestions"></div>
+                <button id="button-filter" onclick="toggleFilter()"><img src="static/img/filter.png" alt=""></button>
             </div>
-            
         </div>
         
-        <div class="catalog-grid">
+        
+       
+        
+        <!-- Conteneur pour les options de filtrage -->
+        <div class="filter-container" id="filterContainer">
+            <form id="filterForm">
+                <label for="min">Min membres :</label>
+                <input type="number" id="min" name="min" min="1">
+                
+                <label for="max">Max membres :</label>
+                <input type="number" id="max" name="max" min="1">
+                
+                <button type="submit">Filtrer</button>
+            </form>
+        </div>
+        
+        <div class="catalog-grid" id="artistList">
             {{range .Artists}}
-            <div class="card" data-name="{{.Name}}" data-url="/artist/{{.ID}}">
+            <div class="card" data-name="{{.Name}}" data-url="/artist/{{.ID}}" data-members="{{len .Members}}">
                 <img class="artist-image" src="{{.Image}}" alt="Image de {{.Name}}" onclick="window.location.href='/artist_detail_catalogue.html?id={{.ID}}'">
                 <h2 class="artist-name">{{.Name}}</h2>
             </div>
@@ -61,6 +82,16 @@
     </div>
 
     <script>
+        // Fonction pour afficher/masquer les options de filtrage
+        function toggleFilter() {
+            const filterContainer = document.getElementById('filterContainer');
+            if (filterContainer.style.display === 'none' || filterContainer.style.display === '') {
+                filterContainer.style.display = 'block';
+            } else {
+                filterContainer.style.display = 'none';
+            }
+        }
+
         // Afficher uniquement les suggestions sans filtrer les cartes
         function showSuggestions() {
             const searchInput = document.getElementById('search-bar').value.toLowerCase();
@@ -131,6 +162,31 @@
                 }
             });
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const cards = document.querySelectorAll('.catalog-grid .card');
+            const filterForm = document.getElementById("filterForm");
+    
+            filterForm.addEventListener("submit", function(event) {
+                event.preventDefault(); // Empêche la soumission du formulaire et la requête vers le serveur
+    
+                // Récupération des valeurs des filtres
+                let min = parseInt(document.getElementById("min").value);
+                let max = parseInt(document.getElementById("max").value);
+    
+                // Appliquer le filtre en fonction du nombre de membres
+                cards.forEach(card => {
+                    const membersCount = parseInt(card.getAttribute('data-members'));
+    
+                    // Vérifie si l'artiste satisfait la condition du filtre
+                    if ((isNaN(min) || membersCount >= min) && (isNaN(max) || membersCount <= max)) {
+                        card.style.display = 'block';  // Afficher l'artiste
+                    } else {
+                        card.style.display = 'none';  // Cacher l'artiste
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
